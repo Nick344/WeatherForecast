@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  weatherprovider:
+    build:
+      context: WeatherProvider
+      dockerfile: Dockerfile
+    ports:
+      - "5001:8080"
+    networks:
+      - weather-net
+
+  weatherapi:
+    build:
+      context: Weather
+      dockerfile: Dockerfile
+    ports:
+      - "5050:8080"
+    depends_on:
+      - weatherprovider
+    environment:
+      - ProviderUrl=http://weatherprovider/weather
+    networks:
+      - weather-net
+
+networks:
+  weather-net:
+    driver: bridge
